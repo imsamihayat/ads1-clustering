@@ -1,0 +1,37 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sklearn.cluster as cluster
+import sklearn.metrics as skmet
+import scipy.optimize as opt
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+
+def err_ranges(x, func, param, sigma):
+    import itertools as iter
+    lower = func(x, *param)
+    upper = lower
+    
+    uplow = []  
+    for p,s in zip(param, sigma):
+        pmin = p - s
+        pmax = p + s
+        uplow.append((pmin, pmax))
+        
+    pmix = list(iter.product(*uplow))
+    
+    for p in pmix:
+        y = func(x, *p)
+        lower = np.minimum(lower, y)
+        upper = np.maximum(upper, y)
+        
+    return lower, upper
+
+df = pd.read_csv('API_19_DS2_en_csv_v2_4700503.csv')
+
+df = df.drop(['Unnamed: 66'], axis=1)
+
+dfc = pd.read_csv('Metadata_Country_API_19_DS2_en_csv_v2_4700503.csv')
